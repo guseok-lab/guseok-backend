@@ -24,10 +24,6 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 이메일
-    @Column(nullable = false)
-    private String email;
-
     // 닉네임
     @Column(nullable = false)
     private String nickname;
@@ -52,14 +48,12 @@ public class Member extends BaseTimeEntity {
 
     @Builder
     public Member(
-        String email,
         String nickname,
         String profileImageUrl,
         Provider provider,
         String providerId,
         Role role
     ) {
-        this.email = email;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.provider = provider;
