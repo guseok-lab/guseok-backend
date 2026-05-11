@@ -19,14 +19,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(droneStreamHandler, "/ws/drone")
-                .setAllowedOrigins("*");  // 개발 중엔 전체 허용
+                .setAllowedOrigins("*");
     }
-
-	@Bean
-	public ServletServerContainerFactoryBean createWebSocketContainer() {
-	    ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
-	    container.setMaxTextMessageBufferSize(512 * 1024);   // 512KB
-	    container.setMaxBinaryMessageBufferSize(512 * 1024); // 512KB
-		return container;
-	}
 }
