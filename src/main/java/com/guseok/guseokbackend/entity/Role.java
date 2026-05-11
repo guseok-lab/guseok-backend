@@ -1,5 +1,6 @@
 package com.guseok.guseokbackend.entity;
 
-public enum Provider {
-    KAKAO
+public enum Role {
+    USER,
+    ADMIN
 }
