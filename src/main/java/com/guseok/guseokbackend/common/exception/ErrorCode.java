@@ -12,6 +12,8 @@ public enum ErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH_001", "로그인이 필요합니다."),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_002", "유효하지 않은 토큰입니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "AUTH_003", "접근 권한이 없습니다."),
+    OAUTH_UNSUPPORTED_PROVIDER(HttpStatus.BAD_REQUEST, "AUTH_004", "지원하지 않는 OAuth 제공자입니다."),
+    OAUTH_PROVIDER_ID_MISSING(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH_005", "OAuth 제공자 ID를 찾을 수 없습니다."),
 
     // Member
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_001", "사용자를 찾을 수 없습니다."),
