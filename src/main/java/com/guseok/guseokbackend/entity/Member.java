@@ -45,18 +45,25 @@ public class Member extends BaseTimeEntity {
     @Column(name = "provider_id", nullable = false)
     private String providerId;
 
+    // USER, ADMIN
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
     @Builder
     public Member(
         String email,
         String nickname,
         String profileImageUrl,
         Provider provider,
-        String providerId
+        String providerId,
+        Role role
     ) {
         this.email = email;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.provider = provider;
         this.providerId = providerId;
+        this.role = role == null ? Role.USER : role;
     }
 }
