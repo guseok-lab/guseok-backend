@@ -15,7 +15,8 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/ws/**").permitAll()  // WebSocket 허용
+                .requestMatchers("/ws/**").permitAll()
+                .requestMatchers("/api/drone/**").permitAll()  // 이거 추가
                 .anyRequest().authenticated()
             );
 
