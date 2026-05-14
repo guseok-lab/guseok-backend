@@ -23,12 +23,28 @@ public class LocalFileStorageService implements FileStorageService {
 
     @Override
     public String storeImage(MultipartFile file) {
+        validateImageFile(file);
         return store(file, IMAGE_DIR);
     }
 
     @Override
     public String storeVideo(MultipartFile file) {
+        validateVideoFile(file);
         return store(file, VIDEO_DIR);
+    }
+
+    private void validateImageFile(MultipartFile file) {
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new BusinessException(ErrorCode.INVALID_FILE_TYPE);
+        }
+    }
+
+    private void validateVideoFile(MultipartFile file) {
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("video/")) {
+            throw new BusinessException(ErrorCode.INVALID_FILE_TYPE);
+        }
     }
 
     private String store(MultipartFile file, Path dir) {

@@ -5,10 +5,12 @@ import com.guseok.guseokbackend.common.exception.ErrorCode;
 import com.guseok.guseokbackend.dto.search.SearchCreateRequest;
 import com.guseok.guseokbackend.dto.search.SearchCreateResponse;
 import com.guseok.guseokbackend.dto.search.SearchDetailResponse;
+import com.guseok.guseokbackend.dto.search.VideoUploadResponse;
 import com.guseok.guseokbackend.entity.Search;
-import com.guseok.guseokbackend.entity.SearchMode;
 import com.guseok.guseokbackend.entity.SearchStatus;
+import com.guseok.guseokbackend.entity.SearchVideo;
 import com.guseok.guseokbackend.repository.SearchRepository;
+import com.guseok.guseokbackend.repository.SearchVideoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class SearchService {
 
     private final SearchRepository searchRepository;
+    private final SearchVideoRepository searchVideoRepository;
     private final FileStorageService fileStorageService;
 
     @Transactional
@@ -41,6 +44,23 @@ public class SearchService {
     @Transactional(readOnly = true)
     public SearchDetailResponse getSearchDetail(Long searchId) {
         return SearchDetailResponse.from(getSearch(searchId));
+    }
+
+    @Transactional
+    public VideoUploadResponse uploadVideo(Long searchId, MultipartFile video) {
+        Search search = getSearch(searchId);
+        String videoPath = fileStorageService.storeVideo(video);
+
+        SearchVideo searchVideo = SearchVideo.builder()
+            .search(search)
+            .videoUrl(videoPath)
+            .fileSize(video.getSize())
+            .build();
+
+        search.updateStatus(SearchStatus.IN_PROGRESS);
+        searchVideoRepository.save(searchVideo);
+
+        return VideoUploadResponse.from(searchVideo);
     }
 
     Search getSearch(Long searchId) {
