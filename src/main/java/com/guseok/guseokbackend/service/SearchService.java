@@ -4,6 +4,7 @@ import com.guseok.guseokbackend.common.exception.BusinessException;
 import com.guseok.guseokbackend.common.exception.ErrorCode;
 import com.guseok.guseokbackend.dto.search.SearchCreateRequest;
 import com.guseok.guseokbackend.dto.search.SearchCreateResponse;
+import com.guseok.guseokbackend.dto.search.SearchDetailResponse;
 import com.guseok.guseokbackend.entity.Search;
 import com.guseok.guseokbackend.entity.SearchMode;
 import com.guseok.guseokbackend.entity.SearchStatus;
@@ -35,6 +36,11 @@ public class SearchService {
             .build();
 
         return SearchCreateResponse.from(searchRepository.save(search));
+    }
+
+    @Transactional(readOnly = true)
+    public SearchDetailResponse getSearchDetail(Long searchId) {
+        return SearchDetailResponse.from(getSearch(searchId));
     }
 
     Search getSearch(Long searchId) {

@@ -3,8 +3,10 @@ package com.guseok.guseokbackend.controller;
 import com.guseok.guseokbackend.common.response.ApiResponse;
 import com.guseok.guseokbackend.dto.search.SearchCreateRequest;
 import com.guseok.guseokbackend.dto.search.SearchCreateResponse;
+import com.guseok.guseokbackend.dto.search.SearchDetailResponse;
 import com.guseok.guseokbackend.service.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Encoding;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,6 +15,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -44,6 +48,14 @@ public class SearchController {
         @RequestPart("targetImage") MultipartFile targetImage
     ) {
         return ResponseEntity.ok(ApiResponse.success(searchService.createSearch(request, targetImage)));
+    }
+
+    @Operation(summary = "탐색 상세 조회", description = "탐색 ID로 상세 정보를 조회합니다. 비회원도 사용 가능합니다.")
+    @GetMapping("/{searchId}")
+    public ResponseEntity<ApiResponse<SearchDetailResponse>> getSearch(
+        @Parameter(description = "탐색 ID", example = "1") @PathVariable Long searchId
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(searchService.getSearchDetail(searchId)));
     }
 
     @Schema(description = "탐색 생성 multipart 폼")
