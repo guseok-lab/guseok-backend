@@ -5,12 +5,16 @@ import com.guseok.guseokbackend.common.exception.ErrorCode;
 import com.guseok.guseokbackend.dto.search.SearchCreateRequest;
 import com.guseok.guseokbackend.dto.search.SearchCreateResponse;
 import com.guseok.guseokbackend.dto.search.SearchDetailResponse;
+import com.guseok.guseokbackend.dto.search.SearchResultResponse;
 import com.guseok.guseokbackend.dto.search.VideoUploadResponse;
 import com.guseok.guseokbackend.entity.Search;
 import com.guseok.guseokbackend.entity.SearchStatus;
 import com.guseok.guseokbackend.entity.SearchVideo;
 import com.guseok.guseokbackend.repository.SearchRepository;
+import com.guseok.guseokbackend.repository.SearchResultRepository;
 import com.guseok.guseokbackend.repository.SearchVideoRepository;
+
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +26,7 @@ public class SearchService {
 
     private final SearchRepository searchRepository;
     private final SearchVideoRepository searchVideoRepository;
+    private final SearchResultRepository searchResultRepository;
     private final FileStorageService fileStorageService;
 
     @Transactional
@@ -61,6 +66,15 @@ public class SearchService {
         searchVideoRepository.save(searchVideo);
 
         return VideoUploadResponse.from(searchVideo);
+    }
+
+    @Transactional(readOnly = true)
+    public List<SearchResultResponse> getSearchResults(Long searchId) {
+        Search search = getSearch(searchId);
+        return searchResultRepository.findBySearch(search)
+            .stream()
+            .map(SearchResultResponse::from)
+            .toList();
     }
 
     Search getSearch(Long searchId) {

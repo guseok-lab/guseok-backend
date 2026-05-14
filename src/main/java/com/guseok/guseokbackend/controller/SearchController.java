@@ -4,7 +4,10 @@ import com.guseok.guseokbackend.common.response.ApiResponse;
 import com.guseok.guseokbackend.dto.search.SearchCreateRequest;
 import com.guseok.guseokbackend.dto.search.SearchCreateResponse;
 import com.guseok.guseokbackend.dto.search.SearchDetailResponse;
+import com.guseok.guseokbackend.dto.search.SearchResultResponse;
 import com.guseok.guseokbackend.dto.search.VideoUploadResponse;
+
+import java.util.List;
 import com.guseok.guseokbackend.service.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -84,6 +87,14 @@ public class SearchController {
         @Schema(description = "기준 사진 파일", type = "string", format = "binary")
         MultipartFile targetImage
     ) {}
+
+    @Operation(summary = "분석 결과 조회", description = "탐색의 AI 분석 결과 목록을 조회합니다. AI 연동 전에는 빈 배열을 반환합니다. 비회원도 사용 가능합니다.")
+    @GetMapping("/{searchId}/results")
+    public ResponseEntity<ApiResponse<List<SearchResultResponse>>> getSearchResults(
+        @Parameter(description = "탐색 ID", example = "1") @PathVariable Long searchId
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(searchService.getSearchResults(searchId)));
+    }
 
     @Schema(description = "영상 첨부 multipart 폼")
     record UploadVideoForm(
