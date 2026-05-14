@@ -16,13 +16,13 @@ public class Search extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 요청 회원
+    // 요청 회원 (비회원이면 null)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     // 실종자 이름
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String name;
 
     // 성별
@@ -30,7 +30,7 @@ public class Search extends BaseTimeEntity {
     private String gender;
 
     // 나이
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Integer age;
 
     // 키
