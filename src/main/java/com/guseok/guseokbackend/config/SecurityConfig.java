@@ -16,7 +16,8 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/ws/**").permitAll()
-                .requestMatchers("/api/drone/**").permitAll()  // 이거 추가
+                .requestMatchers("/api/v1/drone-callback/**").permitAll()  // 추가
+                .requestMatchers("/api/v1/drones/**").permitAll()          // 추가
                 .anyRequest().authenticated()
             );
 
