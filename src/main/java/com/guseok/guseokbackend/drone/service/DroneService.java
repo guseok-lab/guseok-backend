@@ -20,7 +20,7 @@ public class DroneService {
 
     @Transactional(readOnly = true)
     public DroneStatusResponse getAvailable() {
-        Drone drone = droneRepository.findByStatus(DroneConnectionStatus.AVAILABLE)
+        Drone drone = droneRepository.findByStatus(DroneConnectionStatus.CONNECTED)
             .orElseThrow(() -> new BusinessException(ErrorCode.DRONE_NOT_AVAILABLE));
 
         return new DroneStatusResponse(drone.getId(), drone.getStatus(), drone.getStreamUrl());
