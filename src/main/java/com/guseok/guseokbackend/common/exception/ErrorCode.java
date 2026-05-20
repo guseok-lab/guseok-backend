@@ -27,6 +27,7 @@ public enum ErrorCode {
     FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_001", "파일 업로드에 실패했습니다."),
     INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, "FILE_002", "지원하지 않는 파일 형식입니다."),
     FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "FILE_003", "파일 크기가 너무 큽니다."),
+    FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "FILE_004", "파일을 찾을 수 없습니다."),
 
     // AI
     AI_REQUEST_FAILED(HttpStatus.BAD_GATEWAY, "AI_001", "AI 분석 요청에 실패했습니다."),

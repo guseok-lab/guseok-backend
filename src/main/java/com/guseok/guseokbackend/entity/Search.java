@@ -21,17 +21,9 @@ public class Search extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    // 실종자 이름
-    @Column(nullable = true)
-    private String name;
-
     // 성별
     @Column(nullable = false)
     private String gender;
-
-    // 나이
-    @Column(nullable = true)
-    private Integer age;
 
     // 키
     @Column(nullable = false)
@@ -62,9 +54,7 @@ public class Search extends BaseTimeEntity {
     @Builder
     public Search(
         Member member,
-        String name,
         String gender,
-        Integer age,
         Integer height,
         Integer weight,
         String appearance,
@@ -73,9 +63,7 @@ public class Search extends BaseTimeEntity {
         SearchStatus status
     ) {
         this.member = member;
-        this.name = name;
         this.gender = gender;
-        this.age = age;
         this.height = height;
         this.weight = weight;
         this.appearance = appearance;

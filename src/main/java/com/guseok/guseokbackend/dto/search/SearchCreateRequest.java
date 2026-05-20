@@ -28,5 +28,9 @@ public record SearchCreateRequest(
 
     @Schema(description = "탐색 모드 (VIDEO: 영상 분석 / DRONE: 드론 연결)", example = "VIDEO")
     @NotNull(message = "탐색 모드는 필수입니다.")
-    SearchMode searchMode
+    SearchMode searchMode,
+
+    @Schema(description = "기준 사진 OCI 오브젝트 키 (image-upload-url로 발급받은 objectKey)", example = "images/uuid.jpg")
+    @NotBlank(message = "기준 사진은 필수입니다.")
+    String targetImageObjectKey
 ) {}
