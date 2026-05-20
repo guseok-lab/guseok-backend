@@ -24,9 +24,13 @@ public class SearchVideo {
     @JoinColumn(name = "search_id", nullable = false)
     private Search search;
 
-    // 영상 URL
-    @Column(name = "video_url", nullable = false, length = 1000)
+    // 영상 URL (업로드 완료 후 설정)
+    @Column(name = "video_url", nullable = true, length = 1000)
     private String videoUrl;
+
+    // OCI 오브젝트 키
+    @Column(name = "object_key", nullable = true, length = 500)
+    private String objectKey;
 
     // 영상 길이
     @Column(name = "duration_seconds")
@@ -45,12 +49,18 @@ public class SearchVideo {
     public SearchVideo(
         Search search,
         String videoUrl,
+        String objectKey,
         Integer durationSeconds,
         Long fileSize
     ) {
         this.search = search;
         this.videoUrl = videoUrl;
+        this.objectKey = objectKey;
         this.durationSeconds = durationSeconds;
         this.fileSize = fileSize;
+    }
+
+    public void updateVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
     }
 }

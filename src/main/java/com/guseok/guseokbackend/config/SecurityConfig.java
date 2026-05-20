@@ -33,7 +33,7 @@ public class SecurityConfig {
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/oauth2/**", "/login/**", "/auth/**", "/api/v1/searches/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/oauth2/**", "/login/**", "/auth/**", "/api/v1/searches/**", "/api/files/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated())
             .oauth2Login(oauth2 -> oauth2
                 .authorizationEndpoint(endpoint -> endpoint
