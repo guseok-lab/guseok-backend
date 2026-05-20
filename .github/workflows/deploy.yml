@@ -1,0 +1,69 @@
+name: 구석구석 CI/CD 배포 자동화
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. 내 코드 깃허브 컴퓨터로 가져오기
+        uses: actions/checkout@v3
+
+      - name: 2. 자바(JDK 17) 환경 세팅하기
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: 3. 스프링 부트 프로젝트 빌드 권한 부여 (Gradle)
+        run: chmod +x ./gradlew
+
+      - name: 4. 스프링 부트 프로젝트 빌드
+        run: ./gradlew clean build -x test
+
+      - name: 5. 도커 허브 로그인
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: 6. 도커 이미지(상자) 만들고 도커 허브로 쏘기
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/guseok-server .
+          docker push ${{ secrets.DOCKER_USERNAME }}/guseok-server
+
+      - name: 7. 오라클 서버에 원격 접속해서 배포하기
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.ORACLE_HOST }}
+          username: ${{ secrets.ORACLE_USER }}
+          key: ${{ secrets.ORACLE_KEY }}
+          script: |
+            # 서버에 접속해서 도커 허브에 있는 새 상자 가져오기
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/guseok-server
+            
+            # 기존에 돌고 있던 옛날 구석구석 서버 멈추고 지우기
+            sudo docker stop guseok-server || true
+            sudo docker rm guseok-server || true
+            
+            # 새 상자 뜯어서 24시간 백그라운드로 실행하기 (모든 비밀키 주입!)
+            sudo docker run -d -p 8080:8080 --name guseok-server \
+              -e DB_HOST="${{ secrets.DB_HOST }}" \
+              -e DB_PORT="${{ secrets.DB_PORT }}" \
+              -e DB_NAME="${{ secrets.DB_NAME }}" \
+              -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
+              -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+              -e PROD_REDIS_HOST="${{ secrets.PROD_REDIS_HOST }}" \
+              -e KAKAO_CLIENT_ID="${{ secrets.KAKAO_CLIENT_ID }}" \
+              -e KAKAO_CLIENT_SECRET="${{ secrets.KAKAO_CLIENT_SECRET }}" \
+              -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+              -e PROD_FRONTEND_URL="${{ secrets.PROD_FRONTEND_URL }}" \
+              -e OCI_ACCESS_KEY="${{ secrets.OCI_ACCESS_KEY }}" \
+              -e OCI_SECRET_KEY="${{ secrets.OCI_SECRET_KEY }}" \
+              -e OCI_REGION="${{ secrets.OCI_REGION }}" \
+              -e OCI_NAMESPACE="${{ secrets.OCI_NAMESPACE }}" \
+              ${{ secrets.DOCKER_USERNAME }}/guseok-server
+            
+            sudo docker image prune -f
