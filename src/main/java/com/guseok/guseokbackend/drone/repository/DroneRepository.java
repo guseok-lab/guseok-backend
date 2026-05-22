@@ -8,5 +8,5 @@ import com.guseok.guseokbackend.drone.entity.Drone;
 import com.guseok.guseokbackend.drone.enums.DroneConnectionStatus;
 
 public interface DroneRepository extends JpaRepository<Drone, Long> {
-    Optional<Drone> findByStatus(DroneConnectionStatus status);
+    Optional<Drone> findFirstByStatusOrderByIdDesc(DroneConnectionStatus status);
 }

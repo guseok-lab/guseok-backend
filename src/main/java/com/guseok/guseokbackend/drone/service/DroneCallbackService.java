@@ -25,12 +25,10 @@ public class DroneCallbackService {
     // 맥북 stream_server.py 시작 시 스트림 URL 등록
     @Transactional
     public DroneStatusResponse registerStream(StreamUrlRequest request) {
-        Drone drone = droneRepository.findByStatus(DroneConnectionStatus.AVAILABLE)
+        Drone drone = droneRepository.findFirstByStatusOrderByIdDesc(DroneConnectionStatus.AVAILABLE)
             .orElseGet(Drone::create);
-
         drone.connect(request.getStreamUrl());
         droneRepository.save(drone);
-
         log.info("[드론] 스트림 등록 완료 - URL: {}", request.getStreamUrl());
         return new DroneStatusResponse(drone.getId(), drone.getStatus(), drone.getStreamUrl());
     }
