@@ -27,6 +27,8 @@ public class Drone {
 
     private String streamUrl;  // 맥북 MJPEG 스트림 URL
 
+    private Long searchId;
+
     public static Drone create() {
         Drone drone = new Drone();
         drone.status = DroneConnectionStatus.AVAILABLE;
@@ -36,6 +38,12 @@ public class Drone {
     public void connect(String streamUrl) {
         this.status = DroneConnectionStatus.CONNECTED;
         this.streamUrl = streamUrl;
+    }
+
+    public void connectWithSearch(String streamUrl, Long searchId) {  // 추가
+        this.status = DroneConnectionStatus.CONNECTED;
+        this.streamUrl = streamUrl;
+        this.searchId = searchId;
     }
 
     public void disconnect() {
