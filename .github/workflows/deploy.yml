@@ -41,6 +41,17 @@ jobs:
           username: ${{ secrets.ORACLE_USER }}
           key: ${{ secrets.ORACLE_KEY }}
           script: |
+            sudo docker network create guseok-network || true
+            
+            sudo docker stop guseok-redis || true
+            sudo docker rm guseok-redis || true
+
+            sudo docker run -d \
+              --name guseok-redis \
+              --network guseok-network \
+              --restart unless-stopped \
+              redis:7-alpine
+
             # 서버에 접속해서 도커 허브에 있는 새 상자 가져오기
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/guseok-server
             
@@ -48,14 +59,17 @@ jobs:
             sudo docker stop guseok-server || true
             sudo docker rm guseok-server || true
             
-            # 새 상자 뜯어서 24시간 백그라운드로 실행하기 (모든 비밀키 주입!)
+            # 24시간 백그라운드로 실행하기
             sudo docker run -d -p 8080:8080 --name guseok-server \
+              --network guseok-network \
+              --restart unless-stopped \
               -e DB_HOST="${{ secrets.DB_HOST }}" \
               -e DB_PORT="${{ secrets.DB_PORT }}" \
               -e DB_NAME="${{ secrets.DB_NAME }}" \
               -e DB_USERNAME="${{ secrets.DB_USERNAME }}" \
               -e DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
               -e PROD_REDIS_HOST="${{ secrets.PROD_REDIS_HOST }}" \
+              -e PROD_REDIS_PORT="6379" \
               -e KAKAO_CLIENT_ID="${{ secrets.KAKAO_CLIENT_ID }}" \
               -e KAKAO_CLIENT_SECRET="${{ secrets.KAKAO_CLIENT_SECRET }}" \
               -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
