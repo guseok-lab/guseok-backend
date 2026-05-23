@@ -5,13 +5,16 @@ import com.guseok.guseokbackend.common.exception.ErrorCode;
 import com.guseok.guseokbackend.common.jwt.JwtProvider;
 import com.guseok.guseokbackend.common.response.ApiResponse;
 import com.guseok.guseokbackend.dto.TokenResponse;
+import com.guseok.guseokbackend.dto.auth.KakaoLoginRequest;
 import com.guseok.guseokbackend.entity.Member;
 import com.guseok.guseokbackend.entity.Role;
 import com.guseok.guseokbackend.repository.MemberRepository;
+import com.guseok.guseokbackend.service.KakaoAuthService;
 import com.guseok.guseokbackend.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +27,15 @@ public class AuthController {
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
     private final MemberRepository memberRepository;
+    private final KakaoAuthService kakaoAuthService;
+
+    @PostMapping("/kakao")
+    public ResponseEntity<ApiResponse<TokenResponse>> kakaoLogin(
+        @RequestBody KakaoLoginRequest request
+    ) {
+        TokenResponse tokenResponse = kakaoAuthService.login(request.kakaoAccessToken());
+        return ResponseEntity.ok(ApiResponse.success(tokenResponse));
+    }
 
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<TokenResponse>> refresh(
