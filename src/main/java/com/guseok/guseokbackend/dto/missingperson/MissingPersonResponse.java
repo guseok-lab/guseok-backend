@@ -7,6 +7,7 @@ import com.guseok.guseokbackend.entity.MissingStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Schema(description = "실종자 정보 응답")
 public record MissingPersonResponse(
@@ -51,7 +52,10 @@ public record MissingPersonResponse(
     MissingStatus status,
 
     @Schema(description = "등록 일시", example = "2026-05-26T23:10:00")
-    LocalDateTime createdAt
+    LocalDateTime createdAt,
+
+    @Schema(description = "실종 경과 일수", example = "3")
+    long missingDays
 ) {
     public static MissingPersonResponse from(MissingPerson missingPerson) {
         return new MissingPersonResponse(
@@ -68,7 +72,8 @@ public record MissingPersonResponse(
             missingPerson.getContact(),
             missingPerson.getPhotoUrl(),
             missingPerson.getStatus(),
-            missingPerson.getCreatedAt()
+            missingPerson.getCreatedAt(),
+            ChronoUnit.DAYS.between(missingPerson.getCreatedAt(), LocalDateTime.now())
         );
     }
 }

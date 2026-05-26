@@ -58,11 +58,16 @@ public class MissingPersonController {
         return ResponseEntity.ok(ApiResponse.success(missingPersonService.getMyMissingPersons(memberId)));
     }
 
-    @Operation(summary = "탐색 중인 실종자 목록 조회", description = "현재 로그인한 회원이 등록한 실종자 중 SEARCHING 상태인 목록을 조회합니다.")
+    @Operation(summary = "탐색 중인 실종자 수 조회", description = "전체 사용자가 등록한 실종자 중 SEARCHING 상태인 인원 수를 조회합니다.")
+    @GetMapping("/searching/count")
+    public ResponseEntity<ApiResponse<Long>> getSearchingMissingPersonCount() {
+        return ResponseEntity.ok(ApiResponse.success(missingPersonService.countSearchingMissingPersons()));
+    }
+
+    @Operation(summary = "탐색 중인 실종자 목록 조회", description = "전체 사용자가 등록한 실종자 중 SEARCHING 상태인 목록을 조회합니다.")
     @GetMapping("/searching")
-    public ResponseEntity<ApiResponse<List<MissingPersonResponse>>> getMySearchingMissingPersons() {
-        Long memberId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(ApiResponse.success(missingPersonService.getMySearchingMissingPersons(memberId)));
+    public ResponseEntity<ApiResponse<List<MissingPersonResponse>>> getSearchingMissingPersons() {
+        return ResponseEntity.ok(ApiResponse.success(missingPersonService.getSearchingMissingPersons()));
     }
 
     @Operation(summary = "실종자 정보 삭제", description = "현재 로그인한 회원이 등록한 실종자 정보를 삭제합니다.")
