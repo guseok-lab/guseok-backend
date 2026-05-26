@@ -72,11 +72,13 @@ public class MissingPersonService {
     }
 
     @Transactional(readOnly = true)
-    public List<MissingPersonResponse> getMySearchingMissingPersons(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+    public long countSearchingMissingPersons() {
+        return missingPersonRepository.countByStatus(MissingStatus.SEARCHING);
+    }
 
-        return missingPersonRepository.findByMemberAndStatus(member, MissingStatus.SEARCHING)
+    @Transactional(readOnly = true)
+    public List<MissingPersonResponse> getSearchingMissingPersons() {
+        return missingPersonRepository.findByStatus(MissingStatus.SEARCHING)
             .stream()
             .map(MissingPersonResponse::from)
             .toList();

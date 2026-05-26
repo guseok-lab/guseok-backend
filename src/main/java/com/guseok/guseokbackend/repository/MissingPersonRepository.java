@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface MissingPersonRepository extends JpaRepository<MissingPerson, Long> {
     List<MissingPerson> findByMember(Member member);
-    List<MissingPerson> findByMemberAndStatus(Member member, MissingStatus status);
+    List<MissingPerson> findByStatus(MissingStatus status);
+    long countByStatus(MissingStatus status);
 }
