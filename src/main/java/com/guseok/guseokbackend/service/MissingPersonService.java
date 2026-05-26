@@ -7,6 +7,7 @@ import com.guseok.guseokbackend.dto.missingperson.MissingPersonCreateRequest;
 import com.guseok.guseokbackend.dto.missingperson.MissingPersonResponse;
 import com.guseok.guseokbackend.entity.Member;
 import com.guseok.guseokbackend.entity.MissingPerson;
+import com.guseok.guseokbackend.entity.MissingStatus;
 import com.guseok.guseokbackend.repository.MemberRepository;
 import com.guseok.guseokbackend.repository.MissingPersonRepository;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,10 @@ public class MissingPersonService {
             .height(request.height())
             .weight(request.weight())
             .appearanceDescription(request.appearanceDescription())
+            .bodyType(request.bodyType())
+            .lastLocation(request.lastLocation())
+            .missingCircumstance(request.missingCircumstance())
+            .contact(request.contact())
             .photoUrl(photoUrl)
             .build();
 
@@ -66,11 +71,15 @@ public class MissingPersonService {
             .toList();
     }
 
-    private String extractExtension(String filename) {
-        if (filename == null || !filename.contains(".")) {
-            return "bin";
-        }
-        return filename.substring(filename.lastIndexOf('.') + 1);
+    @Transactional(readOnly = true)
+    public List<MissingPersonResponse> getMySearchingMissingPersons(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+
+        return missingPersonRepository.findByMemberAndStatus(member, MissingStatus.SEARCHING)
+            .stream()
+            .map(MissingPersonResponse::from)
+            .toList();
     }
 
     @Transactional
@@ -83,5 +92,12 @@ public class MissingPersonService {
         }
 
         missingPersonRepository.delete(missingPerson);
+    }
+
+    private String extractExtension(String filename) {
+        if (filename == null || !filename.contains(".")) {
+            return "bin";
+        }
+        return filename.substring(filename.lastIndexOf('.') + 1);
     }
 }
