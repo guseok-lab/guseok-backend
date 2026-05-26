@@ -37,7 +37,11 @@ public enum ErrorCode {
     // Drone
     DRONE_CONNECT_FAILED(HttpStatus.BAD_GATEWAY, "DRONE_001", "드론 연결에 실패했습니다."),
     DRONE_NOT_FOUND(HttpStatus.NOT_FOUND, "DRONE_002", "드론을 찾을 수 없습니다."),
-    DRONE_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "DRONE_003", "사용 가능한 드론이 아닙니다.");
+    DRONE_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "DRONE_003", "사용 가능한 드론이 아닙니다."),
+
+    // MissingPerson
+    MISSING_PERSON_NOT_FOUND(HttpStatus.NOT_FOUND, "MISSING_001", "실종자 정보를 찾을 수 없습니다."),
+    MISSING_PERSON_ACCESS_DENIED(HttpStatus.FORBIDDEN, "MISSING_002", "해당 실종자 정보에 접근할 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
