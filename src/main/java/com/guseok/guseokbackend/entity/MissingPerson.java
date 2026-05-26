@@ -39,6 +39,19 @@ public class MissingPerson extends BaseTimeEntity {
     @Column(length = 1000)
     private String appearanceDescription;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private BodyType bodyType;
+
+    @Column(nullable = false)
+    private String lastLocation;
+
+    @Column(nullable = false, length = 1000)
+    private String missingCircumstance;
+
+    @Column(nullable = false, length = 30)
+    private String contact;
+
     @Column(length = 1000)
     private String photoUrl;
 
@@ -55,6 +68,10 @@ public class MissingPerson extends BaseTimeEntity {
         Integer height,
         Integer weight,
         String appearanceDescription,
+        BodyType bodyType,
+        String lastLocation,
+        String missingCircumstance,
+        String contact,
         String photoUrl
     ) {
         this.member = member;
@@ -64,6 +81,10 @@ public class MissingPerson extends BaseTimeEntity {
         this.height = height;
         this.weight = weight;
         this.appearanceDescription = appearanceDescription;
+        this.bodyType = bodyType;
+        this.lastLocation = lastLocation;
+        this.missingCircumstance = missingCircumstance;
+        this.contact = contact;
         this.photoUrl = photoUrl;
         this.status = MissingStatus.SEARCHING;
     }

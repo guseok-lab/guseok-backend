@@ -1,5 +1,6 @@
 package com.guseok.guseokbackend.dto.missingperson;
 
+import com.guseok.guseokbackend.entity.BodyType;
 import com.guseok.guseokbackend.entity.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -32,8 +33,24 @@ public record MissingPersonCreateRequest(
     @Min(value = 0, message = "몸무게는 0 이상이어야 합니다.")
     Integer weight,
 
-    @Schema(description = "인상착의 (선택)", example = "긴 흑발, 교복 착용, 마른 체형")
+    @Schema(description = "인상착의", example = "긴 흑발, 교복 착용")
+    @NotBlank(message = "인상착의는 필수입니다.")
     String appearanceDescription,
+
+    @Schema(description = "체형 (THIN / NORMAL / CHUBBY, 선택)", example = "THIN")
+    BodyType bodyType,
+
+    @Schema(description = "마지막 위치", example = "공주시 신관동 근처")
+    @NotBlank(message = "마지막 위치는 필수입니다.")
+    String lastLocation,
+
+    @Schema(description = "실종 경위", example = "하교 이후 연락이 두절됨")
+    @NotBlank(message = "실종 경위는 필수입니다.")
+    String missingCircumstance,
+
+    @Schema(description = "연락처", example = "010-1234-5678")
+    @NotBlank(message = "연락처는 필수입니다.")
+    String contact,
 
     @Schema(description = "사진 OCI 오브젝트 키 (image-upload-url로 발급받은 objectKey, 선택)", example = "missing-person-images/uuid.jpg")
     String photoObjectKey

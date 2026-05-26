@@ -1,5 +1,6 @@
 package com.guseok.guseokbackend.dto.missingperson;
 
+import com.guseok.guseokbackend.entity.BodyType;
 import com.guseok.guseokbackend.entity.Gender;
 import com.guseok.guseokbackend.entity.MissingPerson;
 import com.guseok.guseokbackend.entity.MissingStatus;
@@ -28,8 +29,20 @@ public record MissingPersonResponse(
     @Schema(description = "몸무게 (kg)", example = "47")
     Integer weight,
 
-    @Schema(description = "인상착의", example = "긴 흑발, 교복 착용, 마른 체형")
+    @Schema(description = "인상착의", example = "긴 흑발, 교복 착용")
     String appearanceDescription,
+
+    @Schema(description = "체형", example = "THIN")
+    BodyType bodyType,
+
+    @Schema(description = "마지막 위치", example = "공주시 신관동 근처")
+    String lastLocation,
+
+    @Schema(description = "실종 경위", example = "하교 이후 연락이 두절됨")
+    String missingCircumstance,
+
+    @Schema(description = "연락처", example = "010-1234-5678")
+    String contact,
 
     @Schema(description = "사진 URL")
     String photoUrl,
@@ -49,6 +62,10 @@ public record MissingPersonResponse(
             missingPerson.getHeight(),
             missingPerson.getWeight(),
             missingPerson.getAppearanceDescription(),
+            missingPerson.getBodyType(),
+            missingPerson.getLastLocation(),
+            missingPerson.getMissingCircumstance(),
+            missingPerson.getContact(),
             missingPerson.getPhotoUrl(),
             missingPerson.getStatus(),
             missingPerson.getCreatedAt()
