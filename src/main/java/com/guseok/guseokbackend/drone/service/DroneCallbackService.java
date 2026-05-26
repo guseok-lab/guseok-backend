@@ -22,21 +22,31 @@ public class DroneCallbackService {
 
     private final DroneRepository droneRepository;
 
-    // 맥북 stream_server.py 시작 시 스트림 URL 등록
     @Transactional
     public DroneStatusResponse registerStream(StreamUrlRequest request) {
-        Drone drone = droneRepository.findFirstByStatusOrderByIdDesc(DroneConnectionStatus.AVAILABLE)
-            .orElseGet(Drone::create);
-        drone.connect(request.getStreamUrl());
+        Drone drone = droneRepository.findByDroneId(request.getDroneId())
+            .orElseGet(() -> Drone.create(
+                request.getDroneId(),
+                request.getStreamUrl(),
+                request.getSearchId()
+            ));
+
+        if (Boolean.TRUE.equals(request.getConnected())) {
+            drone.connect(request.getDroneId(), request.getStreamUrl(), request.getSearchId());
+        } else {
+            drone.disconnect();
+        }
+
         droneRepository.save(drone);
-        log.info("[드론] 스트림 등록 완료 - URL: {}", request.getStreamUrl());
+        log.info("[드론] 스트림 등록 - droneId: {}, searchId: {}, connected: {}",
+            request.getDroneId(), request.getSearchId(), request.getConnected());
+
         return new DroneStatusResponse(drone.getId(), drone.getStatus(), drone.getStreamUrl());
     }
 
-    // 맥북 stream_server.py 상태 변경 시 호출
     @Transactional
     public DroneStatusResponse updateStatus(DroneStatusRequest request) {
-        Drone drone = droneRepository.findById(request.getDroneId())
+        Drone drone = droneRepository.findByDroneId(request.getDroneId())
             .orElseThrow(() -> new BusinessException(ErrorCode.DRONE_NOT_FOUND));
 
         if (request.getStatus() == DroneConnectionStatus.DISCONNECTED) {
@@ -44,8 +54,9 @@ public class DroneCallbackService {
         }
 
         droneRepository.save(drone);
+        log.info("[드론] 상태 업데이트 - droneId: {}, status: {}",
+            request.getDroneId(), drone.getStatus());
 
-        log.info("[드론] 상태 업데이트 - droneId: {}, status: {}", drone.getId(), drone.getStatus());
         return new DroneStatusResponse(drone.getId(), drone.getStatus(), drone.getStreamUrl());
     }
 }
