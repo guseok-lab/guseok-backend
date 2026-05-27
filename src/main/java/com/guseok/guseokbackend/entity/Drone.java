@@ -1,13 +1,21 @@
 package com.guseok.guseokbackend.entity;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.UpdateTimestamp;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -19,40 +27,37 @@ public class Drone {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 드론 이름
     @Column(name = "drone_name", nullable = false)
     private String droneName;
 
-    // AVAILABLE, CONNECTED, DISCONNECTED
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private DroneStatus status;
 
-    // 배터리
     private Integer battery;
-
-    // 위도
     private Double latitude;
-
-    // 경도
     private Double longitude;
-
-    // 고도
     private Double altitude;
 
-    // 수정일
+    // 스트리밍 관련 필드
+    @Column(name = "drone_id", unique = true)
+    private String droneId;         // drone-xxxxxxxx
+
+    @Column(name = "stream_url")
+    private String streamUrl;
+
+    @Column(name = "search_id")
+    private Long searchId;
+
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @Builder
     public Drone(
-        String droneName,
-        DroneStatus status,
-        Integer battery,
-        Double latitude,
-        Double longitude,
-        Double altitude
+        String droneName, DroneStatus status,
+        Integer battery, Double latitude,
+        Double longitude, Double altitude
     ) {
         this.droneName = droneName;
         this.status = status;
@@ -74,5 +79,27 @@ public class Drone {
 
     public void updateBattery(Integer battery) {
         this.battery = battery;
+    }
+
+    // 스트리밍 연결
+    public void connectStream(String droneId, String streamUrl, Long searchId) {
+        this.droneId = droneId;
+        this.streamUrl = streamUrl;
+        this.searchId = searchId;
+        this.status = DroneStatus.CONNECTED;
+    }
+
+    // 스트리밍 해제
+    public void disconnectStream() {
+        this.droneId = null;
+        this.streamUrl = null;
+        this.searchId = null;
+        this.status = DroneStatus.DISCONNECTED;
+    }
+
+    // searchId 연동
+    public void connectWithSearch(Long searchId) {
+        this.searchId = searchId;
+        this.status = DroneStatus.CONNECTED;
     }
 }
