@@ -15,7 +15,9 @@ import com.guseok.guseokbackend.drone.service.DroneCallbackService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Drone", description = "드론 연결 API")
 @RestController
 @RequestMapping("/api/v1/drone-callback")
 @RequiredArgsConstructor

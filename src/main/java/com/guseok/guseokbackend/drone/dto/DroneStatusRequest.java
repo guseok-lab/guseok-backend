@@ -1,6 +1,6 @@
 package com.guseok.guseokbackend.drone.dto;
 
-import com.guseok.guseokbackend.drone.enums.DroneConnectionStatus;
+import com.guseok.guseokbackend.entity.DroneStatus;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,10 +10,10 @@ import lombok.Getter;
 public class DroneStatusRequest {
 
     @NotBlank
-    private String droneId;     // drone-xxxxxxxx (Long → String)
+    private String droneId;
 
-    private Long searchId;      // nullable
+    private Long searchId;
 
     @NotNull
-    private DroneConnectionStatus status;
+    private DroneStatus status;
 }

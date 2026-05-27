@@ -8,9 +8,9 @@ import com.guseok.guseokbackend.common.exception.ErrorCode;
 import com.guseok.guseokbackend.drone.dto.DroneStatusRequest;
 import com.guseok.guseokbackend.drone.dto.DroneStatusResponse;
 import com.guseok.guseokbackend.drone.dto.StreamUrlRequest;
-import com.guseok.guseokbackend.drone.entity.Drone;
-import com.guseok.guseokbackend.drone.enums.DroneConnectionStatus;
 import com.guseok.guseokbackend.drone.repository.DroneRepository;
+import com.guseok.guseokbackend.entity.Drone;
+import com.guseok.guseokbackend.entity.DroneStatus;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,16 +25,15 @@ public class DroneCallbackService {
     @Transactional
     public DroneStatusResponse registerStream(StreamUrlRequest request) {
         Drone drone = droneRepository.findByDroneId(request.getDroneId())
-            .orElseGet(() -> Drone.create(
-                request.getDroneId(),
-                request.getStreamUrl(),
-                request.getSearchId()
-            ));
+            .orElseGet(() -> Drone.builder()
+                .droneName(request.getDroneId())
+                .status(DroneStatus.AVAILABLE)
+                .build());
 
         if (Boolean.TRUE.equals(request.getConnected())) {
-            drone.connect(request.getDroneId(), request.getStreamUrl(), request.getSearchId());
+            drone.connectStream(request.getDroneId(), request.getStreamUrl(), request.getSearchId());
         } else {
-            drone.disconnect();
+            drone.disconnectStream();
         }
 
         droneRepository.save(drone);
@@ -49,8 +48,8 @@ public class DroneCallbackService {
         Drone drone = droneRepository.findByDroneId(request.getDroneId())
             .orElseThrow(() -> new BusinessException(ErrorCode.DRONE_NOT_FOUND));
 
-        if (request.getStatus() == DroneConnectionStatus.DISCONNECTED) {
-            drone.disconnect();
+        if (request.getStatus() == DroneStatus.DISCONNECTED) {
+            drone.disconnectStream();
         }
 
         droneRepository.save(drone);
