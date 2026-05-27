@@ -19,6 +19,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/drone-callback/**").permitAll()
                 .requestMatchers("/api/v1/drones/**").permitAll()
                 .requestMatchers("/api/v1/searches/**").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
             );
 
