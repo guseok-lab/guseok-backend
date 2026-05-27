@@ -12,6 +12,7 @@ import com.guseok.guseokbackend.drone.dto.DroneStatusResponse;
 import com.guseok.guseokbackend.drone.dto.StreamUrlRequest;
 import com.guseok.guseokbackend.drone.service.DroneCallbackService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -22,16 +23,20 @@ public class DroneCallbackController {
 
     private final DroneCallbackService droneCallbackService;
 
-    // 드론 → 백엔드 스트림 정보 등록
-    // stream_server.py가 시작할 때 호출
+    @Operation(
+        summary = "드론 스트림 URL 등록",
+        description = "드론 서버(app.py)가 폰 연결 시 스트림 URL을 Spring에 등록합니다. 드론 서버 내부 API입니다."
+    )
     @PostMapping("/stream")
     public ResponseEntity<ApiResponse<DroneStatusResponse>> registerStream(
         @Valid @RequestBody StreamUrlRequest request) {
         return ResponseEntity.ok(ApiResponse.success(droneCallbackService.registerStream(request)));
     }
 
-    // 드론 → 백엔드 상태 업데이트
-    // stream_server.py가 상태 변경 시 호출
+    @Operation(
+        summary = "드론 상태 업데이트",
+        description = "드론 서버(app.py)가 상태 변경 시 Spring에 알립니다. 드론 서버 내부 API입니다."
+    )
     @PostMapping("/status")
     public ResponseEntity<ApiResponse<DroneStatusResponse>> updateStatus(
         @Valid @RequestBody DroneStatusRequest request) {
