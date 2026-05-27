@@ -15,6 +15,9 @@ public record AiCallbackRequest(
     @Schema(description = "분석 상태 (COMPLETED / FAILED)", example = "COMPLETED")
     @NotBlank String status,
 
+    @Schema(description = "실패 사유 (status가 FAILED일 때)", example = "분석 중 오류 발생")
+    String errorMessage,
+
     @Schema(description = "분석 결과 목록")
     List<AiResultItem> results
 ) {

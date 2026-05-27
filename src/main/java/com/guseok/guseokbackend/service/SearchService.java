@@ -3,6 +3,7 @@ package com.guseok.guseokbackend.service;
 import com.guseok.guseokbackend.common.exception.BusinessException;
 import com.guseok.guseokbackend.common.exception.ErrorCode;
 import com.guseok.guseokbackend.dto.file.AiCallbackRequest;
+import com.guseok.guseokbackend.dto.file.AiResultUploadUrlResponse;
 import com.guseok.guseokbackend.dto.file.ImageUploadUrlResponse;
 import com.guseok.guseokbackend.dto.file.UploadUrlResponse;
 import com.guseok.guseokbackend.dto.search.SearchCreateRequest;
@@ -44,6 +45,16 @@ public class SearchService {
         String objectKey = "images/" + UUID.randomUUID() + "." + extractExtension(originalFilename);
         String uploadUrl = ociStorageService.generatePresignedPutUrl(objectKey);
         return new ImageUploadUrlResponse(objectKey, uploadUrl);
+    }
+
+    // ─── AI 결과 이미지 업로드 URL 발급 ──────────────────────────────────────
+
+    public AiResultUploadUrlResponse generateResultUploadUrl(Long searchId, String originalFilename) {
+        getSearch(searchId); // searchId 유효성 확인
+        String objectKey = "results/" + searchId + "/" + UUID.randomUUID() + "." + extractExtension(originalFilename);
+        String uploadUrl = ociStorageService.generatePresignedPutUrl(objectKey);
+        String resultImageUrl = ociStorageService.buildObjectUrl(objectKey);
+        return new AiResultUploadUrlResponse(objectKey, uploadUrl, resultImageUrl);
     }
 
     // ─── 탐색 생성 (JSON, targetImageObjectKey 포함) ──────────────────────────
