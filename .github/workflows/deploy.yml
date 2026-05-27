@@ -78,7 +78,7 @@ jobs:
               -e OCI_SECRET_KEY="${{ secrets.OCI_SECRET_KEY }}" \
               -e OCI_REGION="${{ secrets.OCI_REGION }}" \
               -e OCI_NAMESPACE="${{ secrets.OCI_NAMESPACE }}" \
-              -e AI_SERVER_URL="http://dummy-ai-server.com" \
+              -e AI_SERVER_URL="${{ secrets.AI_SERVER_URL }}" \
               -e SERVER_BASE_URL="http://168.107.63.84:8080" \
               ${{ secrets.DOCKER_USERNAME }}/guseok-server
             
