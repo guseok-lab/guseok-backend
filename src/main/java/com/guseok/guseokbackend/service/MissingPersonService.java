@@ -57,7 +57,7 @@ public class MissingPersonService {
             .photoUrl(photoUrl)
             .build();
 
-        return MissingPersonResponse.from(missingPersonRepository.save(missingPerson));
+        return toResponse(missingPersonRepository.save(missingPerson));
     }
 
     @Transactional(readOnly = true)
@@ -67,7 +67,7 @@ public class MissingPersonService {
 
         return missingPersonRepository.findByMember(member)
             .stream()
-            .map(MissingPersonResponse::from)
+            .map(this::toResponse)
             .toList();
     }
 
@@ -80,7 +80,7 @@ public class MissingPersonService {
     public List<MissingPersonResponse> getSearchingMissingPersons() {
         return missingPersonRepository.findByStatus(MissingStatus.SEARCHING)
             .stream()
-            .map(MissingPersonResponse::from)
+            .map(this::toResponse)
             .toList();
     }
 
@@ -94,6 +94,14 @@ public class MissingPersonService {
         }
 
         missingPersonRepository.delete(missingPerson);
+    }
+
+    private MissingPersonResponse toResponse(MissingPerson missingPerson) {
+        String photoUrl = missingPerson.getPhotoUrl() != null
+            ? ociStorageService.generatePresignedGetUrl(
+                ociStorageService.extractObjectKey(missingPerson.getPhotoUrl()))
+            : null;
+        return MissingPersonResponse.from(missingPerson, photoUrl);
     }
 
     private String extractExtension(String filename) {
