@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.time.Duration;
@@ -44,7 +45,22 @@ public class OciStorageService {
         }
     }
 
+    public String generatePresignedGetUrl(String objectKey) {
+        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+            .signatureDuration(Duration.ofHours(1))
+            .getObjectRequest(r -> r.bucket(bucket).key(objectKey))
+            .build();
+        return s3Presigner.presignGetObject(presignRequest).url().toString();
+    }
+
     public String buildObjectUrl(String objectKey) {
         return endpoint + "/" + bucket + "/" + objectKey;
+    }
+
+    public String extractObjectKey(String objectUrl) {
+        String prefix = endpoint + "/" + bucket + "/";
+        return objectUrl != null && objectUrl.startsWith(prefix)
+            ? objectUrl.substring(prefix.length())
+            : objectUrl;
     }
 }

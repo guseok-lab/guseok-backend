@@ -58,6 +58,10 @@ public record MissingPersonResponse(
     long missingDays
 ) {
     public static MissingPersonResponse from(MissingPerson missingPerson) {
+        return from(missingPerson, missingPerson.getPhotoUrl());
+    }
+
+    public static MissingPersonResponse from(MissingPerson missingPerson, String photoUrl) {
         return new MissingPersonResponse(
             missingPerson.getId(),
             missingPerson.getName(),
@@ -70,7 +74,7 @@ public record MissingPersonResponse(
             missingPerson.getLastLocation(),
             missingPerson.getMissingCircumstance(),
             missingPerson.getContact(),
-            missingPerson.getPhotoUrl(),
+            photoUrl,
             missingPerson.getStatus(),
             missingPerson.getCreatedAt(),
             ChronoUnit.DAYS.between(missingPerson.getCreatedAt(), LocalDateTime.now())
