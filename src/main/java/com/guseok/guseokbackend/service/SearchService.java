@@ -80,7 +80,8 @@ public class SearchService {
 
     @Transactional(readOnly = true)
     public SearchDetailResponse getSearchDetail(Long searchId) {
-        return SearchDetailResponse.from(getSearch(searchId));
+        Search search = getSearch(searchId);
+        return SearchDetailResponse.from(search, searchVideoRepository.findBySearch(search));
     }
 
     // ─── 영상 업로드 URL 발급 ─────────────────────────────────────────────────
