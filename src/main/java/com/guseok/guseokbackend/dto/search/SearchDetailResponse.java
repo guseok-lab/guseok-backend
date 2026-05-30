@@ -36,14 +36,14 @@ public record SearchDetailResponse(
     @Schema(description = "첨부 영상 다운로드 URL 목록 (1시간 유효 presigned URL)")
     List<String> videoUrls
 ) {
-    public static SearchDetailResponse from(Search search, List<String> videoUrls) {
+    public static SearchDetailResponse from(Search search, String targetImageUrl, List<String> videoUrls) {
         return new SearchDetailResponse(
             search.getId(),
             search.getGender(),
             search.getHeight(),
             search.getWeight(),
             search.getAppearance(),
-            search.getTargetImageUrl(),
+            targetImageUrl,
             search.getSearchMode(),
             search.getStatus(),
             videoUrls
