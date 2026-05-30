@@ -3,7 +3,9 @@ package com.guseok.guseokbackend.dto.search;
 import com.guseok.guseokbackend.entity.Search;
 import com.guseok.guseokbackend.entity.SearchMode;
 import com.guseok.guseokbackend.entity.SearchStatus;
+import com.guseok.guseokbackend.entity.SearchVideo;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 
 @Schema(description = "탐색 상세 조회 응답")
 public record SearchDetailResponse(
@@ -30,9 +32,16 @@ public record SearchDetailResponse(
     SearchMode searchMode,
 
     @Schema(description = "탐색 상태", example = "REQUESTED")
-    SearchStatus status
+    SearchStatus status,
+
+    @Schema(description = "첨부 영상 URL 목록")
+    List<String> videoUrls
 ) {
-    public static SearchDetailResponse from(Search search) {
+    public static SearchDetailResponse from(Search search, List<SearchVideo> videos) {
+        List<String> urls = videos.stream()
+            .map(SearchVideo::getVideoUrl)
+            .filter(url -> url != null)
+            .toList();
         return new SearchDetailResponse(
             search.getId(),
             search.getGender(),
@@ -41,7 +50,8 @@ public record SearchDetailResponse(
             search.getAppearance(),
             search.getTargetImageUrl(),
             search.getSearchMode(),
-            search.getStatus()
+            search.getStatus(),
+            urls
         );
     }
 }
