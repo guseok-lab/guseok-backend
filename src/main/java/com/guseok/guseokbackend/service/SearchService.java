@@ -81,7 +81,10 @@ public class SearchService {
     @Transactional(readOnly = true)
     public SearchDetailResponse getSearchDetail(Long searchId) {
         Search search = getSearch(searchId);
-        return SearchDetailResponse.from(search, searchVideoRepository.findBySearch(search));
+        List<String> videoUrls = searchVideoRepository.findBySearch(search).stream()
+            .map(v -> ociStorageService.generatePresignedGetUrl(v.getObjectKey()))
+            .toList();
+        return SearchDetailResponse.from(search, videoUrls);
     }
 
     // ─── 영상 업로드 URL 발급 ─────────────────────────────────────────────────
