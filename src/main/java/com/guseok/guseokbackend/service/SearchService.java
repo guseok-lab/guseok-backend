@@ -170,7 +170,13 @@ public class SearchService {
         Search search = getSearch(searchId);
         return searchResultRepository.findBySearch(search)
             .stream()
-            .map(SearchResultResponse::from)
+            .map(result -> {
+                String presignedImageUrl = result.getMatchedImageUrl() != null
+                    ? ociStorageService.generatePresignedGetUrl(
+                        ociStorageService.extractObjectKey(result.getMatchedImageUrl()))
+                    : null;
+                return SearchResultResponse.from(result, presignedImageUrl);
+            })
             .toList();
     }
 

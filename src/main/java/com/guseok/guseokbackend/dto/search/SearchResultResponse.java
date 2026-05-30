@@ -26,13 +26,13 @@ public record SearchResultResponse(
     @Schema(description = "영상 내 발견 시점 (초)", example = "34")
     Integer matchedTimeSeconds
 ) {
-    public static SearchResultResponse from(SearchResult result) {
+    public static SearchResultResponse from(SearchResult result, String presignedImageUrl) {
         return new SearchResultResponse(
             result.getId(),
             result.getResultType(),
             result.getStatus(),
             result.getAccuracy(),
-            result.getMatchedImageUrl(),
+            presignedImageUrl,
             result.getMatchedTimeSeconds()
         );
     }
