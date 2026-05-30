@@ -122,7 +122,10 @@ public class SearchService {
         search.updateStatus(SearchStatus.PENDING);
 
         try {
-            aiRequestService.requestAnalysis(search.getId(), video.getObjectKey(), video.getVideoUrl(), search.getTargetImageUrl());
+            String presignedVideoUrl = ociStorageService.generatePresignedGetUrl(video.getObjectKey());
+            String presignedTargetImageUrl = ociStorageService.generatePresignedGetUrl(
+                ociStorageService.extractObjectKey(search.getTargetImageUrl()));
+            aiRequestService.requestAnalysis(search.getId(), presignedVideoUrl, presignedTargetImageUrl);
         } catch (BusinessException e) {
             log.warn("AI 분석 요청 실패 - searchId: {}, 상태는 PENDING 유지", search.getId());
         }
