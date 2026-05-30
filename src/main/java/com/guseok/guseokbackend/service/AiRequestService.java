@@ -22,7 +22,7 @@ public class AiRequestService {
         this.restClient = restClientBuilder.build();
     }
 
-    public void requestAnalysis(Long searchId, String objectKey, String videoUrl, String targetImageUrl) {
+    public void requestAnalysis(Long searchId, String videoUrl, String targetImageUrl) {
         try {
             var requestBody = new AiAnalysisRequest(
                 searchId,
