@@ -1,3 +1,7 @@
+#백엔드 서비스 아키텍처
+<img width="2133" height="2313" alt="image" src="https://github.com/user-attachments/assets/dd5805ac-5cd1-40c2-b077-816e4b646c66" />
+
+
 ## 드론 영상 실시간 스트리밍 파이프라인 구현
 ### 전체 흐름
 ```
