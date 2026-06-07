@@ -17,6 +17,9 @@ import com.guseok.guseokbackend.entity.SearchResult;
 import com.guseok.guseokbackend.entity.SearchResultStatus;
 import com.guseok.guseokbackend.entity.SearchStatus;
 import com.guseok.guseokbackend.entity.SearchVideo;
+import com.guseok.guseokbackend.drone.repository.DroneRepository;
+import com.guseok.guseokbackend.entity.Drone;
+import com.guseok.guseokbackend.entity.SearchMode;
 import com.guseok.guseokbackend.repository.SearchRepository;
 import com.guseok.guseokbackend.repository.SearchResultRepository;
 import com.guseok.guseokbackend.repository.SearchVideoRepository;
@@ -38,6 +41,7 @@ public class SearchService {
     private final SearchResultRepository searchResultRepository;
     private final OciStorageService ociStorageService;
     private final AiRequestService aiRequestService;
+    private final DroneRepository droneRepository;
 
     // ─── 이미지 업로드 URL 발급 ───────────────────────────────────────────────
 
@@ -86,7 +90,10 @@ public class SearchService {
         List<String> videoUrls = searchVideoRepository.findBySearch(search).stream()
             .map(v -> ociStorageService.generatePresignedGetUrl(v.getObjectKey()))
             .toList();
-        return SearchDetailResponse.from(search, presignedTargetImageUrl, videoUrls);
+        Drone drone = search.getSearchMode() == SearchMode.DRONE
+            ? droneRepository.findBySearchId(searchId).orElse(null)
+            : null;
+        return SearchDetailResponse.from(search, presignedTargetImageUrl, videoUrls, drone);
     }
 
     // ─── 영상 업로드 URL 발급 ─────────────────────────────────────────────────
