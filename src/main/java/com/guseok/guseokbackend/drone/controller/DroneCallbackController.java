@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guseok.guseokbackend.common.response.ApiResponse;
+import com.guseok.guseokbackend.drone.dto.DroneDetectionRequest;
 import com.guseok.guseokbackend.drone.dto.DroneStatusRequest;
 import com.guseok.guseokbackend.drone.dto.DroneStatusResponse;
 import com.guseok.guseokbackend.drone.dto.StreamUrlRequest;
@@ -43,5 +44,16 @@ public class DroneCallbackController {
     public ResponseEntity<ApiResponse<DroneStatusResponse>> updateStatus(
         @Valid @RequestBody DroneStatusRequest request) {
         return ResponseEntity.ok(ApiResponse.success(droneCallbackService.updateStatus(request)));
+    }
+
+    @Operation(
+        summary = "드론 실시간 탐지 결과 수신",
+        description = "AI 서버가 드론 스트림에서 탐지한 결과를 전송합니다. DB에 저장 후 WebSocket으로 프론트에 전달합니다."
+    )
+    @PostMapping("/detection")
+    public ResponseEntity<ApiResponse<Void>> handleDetection(
+        @Valid @RequestBody DroneDetectionRequest request) {
+        droneCallbackService.handleDetection(request);
+        return ResponseEntity.ok(ApiResponse.success());
     }
 }

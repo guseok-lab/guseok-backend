@@ -41,9 +41,35 @@ public class AiRequestService {
         }
     }
 
+    public void requestDroneAnalysis(Long searchId, String streamUrl, String targetImageUrl) {
+        try {
+            var requestBody = new AiDroneAnalysisRequest(
+                searchId,
+                streamUrl,
+                targetImageUrl,
+                serverBaseUrl + "/api/v1/drone-callback/detection"
+            );
+            restClient.post()
+                .uri(aiServerUrl + "/analyze-stream")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(requestBody)
+                .retrieve()
+                .toBodilessEntity();
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.AI_REQUEST_FAILED);
+        }
+    }
+
     private record AiAnalysisRequest(
         Long searchId,
         String videoUrl,
+        String targetImageUrl,
+        String callbackUrl
+    ) {}
+
+    private record AiDroneAnalysisRequest(
+        Long searchId,
+        String streamUrl,
         String targetImageUrl,
         String callbackUrl
     ) {}
