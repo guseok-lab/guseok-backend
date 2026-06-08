@@ -20,7 +20,6 @@ import com.guseok.guseokbackend.entity.SearchResult;
 import com.guseok.guseokbackend.entity.SearchResultStatus;
 import com.guseok.guseokbackend.repository.SearchRepository;
 import com.guseok.guseokbackend.repository.SearchResultRepository;
-import com.guseok.guseokbackend.service.AiRequestService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +33,6 @@ public class DroneCallbackService {
     private final SearchRepository searchRepository;
     private final SearchResultRepository searchResultRepository;
     private final DroneStreamHandler droneStreamHandler;
-    private final AiRequestService aiRequestService;
     private final ObjectMapper objectMapper;
 
     @Transactional
@@ -54,18 +52,6 @@ public class DroneCallbackService {
         droneRepository.save(drone);
         log.info("[드론] 스트림 등록 - droneId: {}, searchId: {}, connected: {}",
             request.getDroneId(), request.getSearchId(), request.getConnected());
-
-        if (Boolean.TRUE.equals(request.getConnected()) && request.getSearchId() != null) {
-            Search search = searchRepository.findById(request.getSearchId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.SEARCH_NOT_FOUND));
-            try {
-                String presignedTargetImageUrl = search.getTargetImageUrl();
-                aiRequestService.requestDroneAnalysis(
-                    request.getSearchId(), request.getStreamUrl(), presignedTargetImageUrl);
-            } catch (BusinessException e) {
-                log.warn("[드론] AI 분석 요청 실패 - searchId: {}", request.getSearchId());
-            }
-        }
 
         return new DroneStatusResponse(drone.getId(), drone.getStatus(), drone.getStreamUrl());
     }

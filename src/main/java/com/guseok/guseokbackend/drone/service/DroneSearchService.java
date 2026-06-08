@@ -9,6 +9,9 @@ import com.guseok.guseokbackend.drone.dto.DroneStatusResponse;
 import com.guseok.guseokbackend.drone.repository.DroneRepository;
 import com.guseok.guseokbackend.entity.Drone;
 import com.guseok.guseokbackend.entity.DroneStatus;
+import com.guseok.guseokbackend.entity.Search;
+import com.guseok.guseokbackend.repository.SearchRepository;
+import com.guseok.guseokbackend.service.AiRequestService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 public class DroneSearchService {
 
     private final DroneRepository droneRepository;
+    private final SearchRepository searchRepository;
+    private final AiRequestService aiRequestService;
 
     @Transactional
     public DroneStatusResponse connect(Long searchId) {
@@ -27,6 +32,16 @@ public class DroneSearchService {
 
         drone.connectWithSearch(searchId);
         droneRepository.save(drone);
+
+        if (drone.getStreamUrl() != null) {
+            Search search = searchRepository.findById(searchId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.SEARCH_NOT_FOUND));
+            try {
+                aiRequestService.requestDroneAnalysis(searchId, drone.getStreamUrl(), search.getTargetImageUrl());
+            } catch (BusinessException e) {
+                log.warn("[드론] AI 분석 요청 실패 - searchId: {}", searchId);
+            }
+        }
 
         log.info("[드론] searchId {} 연결 완료", searchId);
         return new DroneStatusResponse(drone.getId(), drone.getStatus(), drone.getStreamUrl());
